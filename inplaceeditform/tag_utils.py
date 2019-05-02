@@ -65,7 +65,7 @@ def parse_args_kwargs(parser, token):
 
 def get_args_and_kwargs(args, kwargs, context):
     out_args = [arg.resolve(context) for arg in args]
-    out_kwargs = dict([(smart_str(k, 'ascii'), v.resolve(context)) for k, v in kwargs.items()])
+    out_kwargs = dict([(smart_str(k, 'ascii'), v.resolve(context)) for k, v in list(kwargs.items())])
     return out_args, out_kwargs
 
 

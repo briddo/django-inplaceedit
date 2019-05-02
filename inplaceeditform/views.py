@@ -15,20 +15,15 @@
 # along with this programe.  If not, see <http://www.gnu.org/licenses/>.
 
 import json
-import sys
 
 from django.contrib.contenttypes.models import ContentType
 from django.http import HttpResponse
 from django.forms import ValidationError
 from django.shortcuts import get_object_or_404
 
-from inplaceeditform.commons import (get_dict_from_obj, apply_filters,
-                                     get_adaptor_class)
+from .commons import (get_dict_from_obj, apply_filters, get_adaptor_class)
 
 MIMETYPE_RESPONSE = 'text'
-
-if sys.version_info[0] >= 2:
-    unicode = str
 
 
 def save_ajax(request):
@@ -53,16 +48,16 @@ def save_ajax(request):
             return _get_http_response({'errors': False,
                                        'value': adaptor.render_value_edit()})
         messages = []  # The error is for another field that you are editing
-        for field_name_error, errors_field in form.errors.items():
+        for field_name_error, errors_field in list(form.errors.items()):
             for error in errors_field:
                 if field_name_error == '__all__':  # The error is model clean type
-                    messages.append(u"Error: %s" % error)
+                    messages.append("Error: %s" % error)
                 else:
-                    messages.append(u"%s: %s" % (field_name_error, error))
+                    messages.append("%s: %s" % (field_name_error, error))
         message_i18n = ', '.join(messages)
         return _get_http_response({'errors': message_i18n})
     except ValidationError as error:  # The error is for a field that you are editing
-        message_i18n = ', '.join([u"%s" % m for m in error.messages])
+        message_i18n = ', '.join(["%s" % m for m in error.messages])
         return _get_http_response({'errors': message_i18n})
 
 
@@ -119,7 +114,7 @@ def _convert_params_in_config(request_params, exclude_params=None):
     exclude_params = exclude_params or []
     config = {}
     options_widget = {}
-    for key, value in request_params.items():
+    for key, value in list(request_params.items()):
         if key not in exclude_params:
             if key.startswith('__widget_'):
                 key = key.replace('__widget_', '')

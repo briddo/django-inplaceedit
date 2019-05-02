@@ -15,17 +15,17 @@
 
 import json
 
+from django.urls import reverse
 from django import template
-from django.core.urlresolvers import reverse
-from django.template import Library, Variable
 
-from inplaceeditform import settings as inplace_settings
-from inplaceeditform.commons import get_adaptor_class, get_static_url, get_admin_static_url
-from inplaceeditform.tag_utils import RenderWithArgsAndKwargsNode, parse_args_kwargs
+from .. import settings as inplace_settings
+from ..commons import get_adaptor_class, get_static_url, get_admin_static_url
+from ..tag_utils import RenderWithArgsAndKwargsNode, parse_args_kwargs
 
-register = Library()
+register = template.Library()
 
 
+@register.inclusion_tag('inplaceeditform/inplace_js.html', takes_context=True)
 def inplace_js(context, activate_inplaceedit=True, toolbar=False):
     request = context['request']
     request.inplace_js_rendered = True
@@ -46,9 +46,9 @@ def inplace_js(context, activate_inplaceedit=True, toolbar=False):
         'focus_when_editing': json.dumps(inplace_settings.INPLACE_FOCUS_WHEN_EDITING),
         'inplace_js_extra': getattr(request, 'inplace_js_extra', '')
     }
-register.inclusion_tag("inplaceeditform/inplace_js.html", takes_context=True)(inplace_js)
 
 
+@register.inclusion_tag('inplaceeditform/inplace_css.html', takes_context=True)
 def inplace_css(context, toolbar=False):
     request = context['request']
     request.inplace_css_rendered = True
@@ -58,9 +58,9 @@ def inplace_css(context, toolbar=False):
         'toolbar': toolbar,
         'inplace_js_extra': getattr(request, 'inplace_css_extra', '')
     }
-register.inclusion_tag("inplaceeditform/inplace_css.html", takes_context=True)(inplace_css)
 
 
+@register.inclusion_tag('inplaceeditform/inplace_static.html', takes_context=True)
 def inplace_static(context):
     return {
         'STATIC_URL': get_static_url(),
@@ -68,15 +68,14 @@ def inplace_static(context):
         'toolbar': False,
         'request': context['request']
     }
-register.inclusion_tag("inplaceeditform/inplace_static.html", takes_context=True)(inplace_static)
 
 
-#to old django versions
+@register.inclusion_tag('inplaceeditform/inplace_static.html', takes_context=True)
 def inplace_media(context):
     return inplace_static(context)
-register.inclusion_tag("inplaceeditform/inplace_static.html", takes_context=True)(inplace_media)
 
 
+@register.inclusion_tag('inplaceeditform/inplace_static.html', takes_context=True)
 def inplace_toolbar(context):
     return {
         'STATIC_URL': get_static_url(),
@@ -84,7 +83,6 @@ def inplace_toolbar(context):
         'toolbar': True,
         'request': context['request']
     }
-register.inclusion_tag("inplaceeditform/inplace_static.html", takes_context=True)(inplace_toolbar)
 
 
 class InplaceEditNode(RenderWithArgsAndKwargsNode):
@@ -96,7 +94,7 @@ class InplaceEditNode(RenderWithArgsAndKwargsNode):
         obj_field_name_split = obj_field_name.split(".")
         obj_context = '.'.join(obj_field_name_split[:-1])
         field_name = obj_field_name_split[-1]
-        obj = Variable(obj_context).resolve(context)
+        obj = template.Variable(obj_context).resolve(context)
         adaptor = kwargs.get('adaptor', None)
         class_adaptor = get_adaptor_class(adaptor, obj, field_name)
         request = context.get('request')

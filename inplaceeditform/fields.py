@@ -23,22 +23,22 @@ import django
 from copy import deepcopy
 
 from django.conf import settings
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.contrib.admin.widgets import AdminDateWidget, AdminSplitDateTime, AdminTimeWidget
 from django.forms.models import modelform_factory
 from django.template.loader import render_to_string
 from django.utils.formats import number_format
 
-from inplaceeditform import settings as inplace_settings
-from inplaceeditform.commons import apply_filters, import_module, has_transmeta, get_static_url, get_admin_static_url, get_module_name
-from inplaceeditform.perms import SuperUserPermEditInline
+from . import settings as inplace_settings
+from .commons import apply_filters, import_module, has_transmeta, get_static_url, get_admin_static_url, get_module_name
+from .perms import SuperUserPermEditInline
 
 
 if sys.version_info[0] == 2:
-    string = basestring
+    string = str
 else:
     string = str
-    unicode = str
+    str = str
 
 
 class BaseAdaptorField(object):
@@ -57,7 +57,7 @@ class BaseAdaptorField(object):
         self.field_name_render = field_name  # To transmeta
 
         self.config = config or {}
-        self.config['obj_id'] = unicode(self.obj.pk)
+        self.config['obj_id'] = str(self.obj.pk)
         self.config['field_name'] = self.field_name_render
         self.config['app_label'] = self.model._meta.app_label
         self.config['module_name'] = get_module_name(self.model)
@@ -148,7 +148,7 @@ class BaseAdaptorField(object):
         if edit_empty_value:
             return edit_empty_value
         else:
-            return unicode(inplace_settings.INPLACEEDIT_EDIT_EMPTY_VALUE)
+            return str(inplace_settings.INPLACEEDIT_EDIT_EMPTY_VALUE)
 
     def render_field(self, template_name="inplaceeditform/render_field.html", extra_context=None):
         extra_context = extra_context or {}
@@ -249,7 +249,7 @@ class BaseAdaptorField(object):
             if not auto_height or not auto_width:
                 style += "font-size: %spx; " % font_size
                 style += "line-height: %spx; " % line_height
-            for key, value in widget_options.items():
+            for key, value in list(widget_options.items()):
                 if key in ('height', 'width'):
                     continue
                 style += "%s: %s; " % (key, value)
@@ -266,7 +266,7 @@ class BaseAdaptorField(object):
                 self.field_name = transmeta.get_real_fieldname(self.field_name)
                 self.transmeta = True
                 if not self.render_value(self.field_name):
-                    message_translation = unicode(inplace_settings.INPLACEEDIT_EDIT_MESSAGE_TRANSLATION)
+                    message_translation = str(inplace_settings.INPLACEEDIT_EDIT_MESSAGE_TRANSLATION)
                     self.initial = {self.field_name: message_translation}
                 return
         self.transmeta = False
@@ -549,7 +549,7 @@ class AdaptorForeingKeyField(BaseAdaptorField):
     def render_value(self, field_name=None):
         value = super(AdaptorForeingKeyField, self).render_value(field_name)
         if not isinstance(value, string):
-            value = unicode(value)
+            value = str(value)
         return value
 
     def get_value_editor(self, value):
@@ -617,7 +617,7 @@ class AdaptorFileField(BaseAdaptorField):
         self.config['can_auto_save'] = 0
 
     def loads_to_post(self, request):
-        files = [f for f in request.FILES.values()]
+        files = [f for f in list(request.FILES.values())]
         return files and files[0] or None
 
     def treatment_height(self, height, font_size, width=None):

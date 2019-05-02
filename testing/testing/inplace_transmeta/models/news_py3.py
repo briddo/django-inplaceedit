@@ -22,9 +22,9 @@ from django.utils.translation import ugettext_lazy as _
 
 class News(models.Model, metaclass=transmeta.TransMeta):
 
-    title = models.CharField(verbose_name=_(u'Title'),
+    title = models.CharField(verbose_name=_('Title'),
                              max_length=100)
-    description = models.TextField(verbose_name=_(u'Description'),
+    description = models.TextField(verbose_name=_('Description'),
                                    blank=True, null=True)
 
     class Meta:

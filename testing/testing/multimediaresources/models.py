@@ -26,11 +26,11 @@ STATUS = (
 
 
 class TypeResource(models.Model):
-    name = models.CharField(verbose_name=_(u'name'),
+    name = models.CharField(verbose_name=_('name'),
                             max_length=100, null=False)
 
     class Meta:
-        verbose_name = _(u'Type of resource')
+        verbose_name = _('Type of resource')
 
     def __unicode__(self):
         return self.name
@@ -40,27 +40,27 @@ class TypeResource(models.Model):
 
 
 class Resource(models.Model):
-    name = models.CharField(verbose_name=_(u'Name'),
+    name = models.CharField(verbose_name=_('Name'),
                             max_length=100, null=False, blank=False,
                             unique=True)
-    created = models.DateField(verbose_name=_(u'Date of created'))
-    description = models.TextField(verbose_name=_(u'Description'),
+    created = models.DateField(verbose_name=_('Date of created'))
+    description = models.TextField(verbose_name=_('Description'),
                                    blank=True, null=True)
-    status = models.CharField(verbose_name=_(u'Status'),
+    status = models.CharField(verbose_name=_('Status'),
                               max_length=20, choices=STATUS,
                               default='order', help_text='Status of the resource.',
                               editable=True, null=False, blank=False)
-    resource_type = models.ForeignKey(TypeResource, verbose_name=_(u'Type'),
+    resource_type = models.ForeignKey(TypeResource, verbose_name=_('Type'),
                                       null=False, blank=False, editable=True)
-    owner = models.ManyToManyField(User, verbose_name=_(u'Owner'))
-    amount = models.IntegerField(verbose_name=_(u'Amount'), null=True, blank=True)
-    can_borrow = models.BooleanField(verbose_name=_(u'Can borrow?'))
-    available_from = models.DateTimeField(verbose_name=_(u"Will be available from"))
-    image = models.ImageField(verbose_name=_(u"Associated Image"), null=True, blank=True, upload_to="images")
-    file = models.FileField(verbose_name=_(u"File Text"), null=True, blank=True, upload_to="files")
+    owner = models.ManyToManyField(User, verbose_name=_('Owner'))
+    amount = models.IntegerField(verbose_name=_('Amount'), null=True, blank=True)
+    can_borrow = models.BooleanField(verbose_name=_('Can borrow?'))
+    available_from = models.DateTimeField(verbose_name=_("Will be available from"))
+    image = models.ImageField(verbose_name=_("Associated Image"), null=True, blank=True, upload_to="images")
+    file = models.FileField(verbose_name=_("File Text"), null=True, blank=True, upload_to="files")
 
     class Meta:
-        verbose_name = _(u'Resources')
+        verbose_name = _('Resources')
 
     @models.permalink
     def get_absolute_url(self):

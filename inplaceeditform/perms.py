@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this programe.  If not, see <http://www.gnu.org/licenses/>.
 
-from inplaceeditform.commons import get_module_name
+from .commons import get_module_name
 
 
 class SuperUserPermEditInline(object):

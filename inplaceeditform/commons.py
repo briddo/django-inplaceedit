@@ -20,8 +20,8 @@ from django.db.models.fields import FieldDoesNotExist
 from django.db.models.fields.related import ForeignKey, ManyToManyField
 from django.conf import settings
 
-from inplaceeditform import settings as inplace_settings
-from inplaceeditform.adaptors import ADAPTOR_INPLACEEDIT as DEFAULT_ADAPTOR_INPLACEEDIT
+from . import settings as inplace_settings
+from .adaptors import ADAPTOR_INPLACEEDIT as DEFAULT_ADAPTOR_INPLACEEDIT
 
 has_transmeta = False
 DEFAULT_VALUE = ''
@@ -39,7 +39,7 @@ def get_dict_from_obj(obj):
     '''
     obj_dict = obj.__dict__
     obj_dict_result = obj_dict.copy()
-    for key, value in obj_dict.items():
+    for key, value in list(obj_dict.items()):
         if key.endswith('_id'):
             key2 = key.replace('_id', '')
             try:
@@ -120,7 +120,7 @@ def get_adaptor_class(adaptor=None, obj=None, field_name=None):
 
         if getattr(field, 'choices', None):
             adaptor = 'choices'
-    from inplaceeditform.fields import BaseAdaptorField
+    from .fields import BaseAdaptorField
     path_adaptor = adaptor and (inplace_settings.ADAPTOR_INPLACEEDIT.get(adaptor, None) or
                                 DEFAULT_ADAPTOR_INPLACEEDIT.get(adaptor, None))
     if not path_adaptor and adaptor:

@@ -38,7 +38,7 @@ from testing.unusual_fields.models import UnusualModel
 if sys.version_info[0] >= 2:
     string = str
 else:
-    string = basestring
+    string = str
 
 
 class InplaceTestCase(TestCase):
